@@ -53,6 +53,7 @@ function populateEntryFromResponse(entry, response, page) {
   }
 
   entry.request.httpVersion = response.protocol;
+  //entry.request._initiator = initiator
 
   if (response.fromDiskCache === true) {
     if (isHttp1x(response.protocol)) {
@@ -262,8 +263,7 @@ module.exports = {
               __frameId: params.frameId,
               _initialPriority: request.initialPriority,
               _priority: request.initialPriority,
-              _initiator: params.initiator.url,
-              _initiator_line: params.initiator.lineNumber,
+              _initiator: params.initiator,
               pageref: currentPageId,
               request: req,
               time: 0
