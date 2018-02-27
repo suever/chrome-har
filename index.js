@@ -545,16 +545,6 @@ module.exports = {
               );
               continue;
             }
-
-            // This could be due to incorrect domain name etc. Sad, but unfortunately not something that a HAR file can
-            // represent.
-            debug(
-              `Failed to load url '${entry.request
-                .url}' (canceled: ${params.canceled})`
-            );
-            entries = entries.filter(
-              entry => entry.__requestId !== params.requestId
-            );
           }
           break;
 
