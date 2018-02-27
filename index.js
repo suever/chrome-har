@@ -16,6 +16,7 @@ const {
 } = require('./lib/headers');
 
 const max = Math.max;
+const min = Math.min;
 
 const defaultOptions = {
   includeResourcesFromDiskCache: false
@@ -139,6 +140,14 @@ function populateEntryFromResponse(entry, response, page) {
 
     entry.time =
       max(0, blocked) + max(0, dns) + max(0, connect) + send + wait + receive;
+
+    if (entry.__requestId === page.__firstRequestId) {
+      // Make sure that the wallTime corresponds to the FIRST request
+      const requestTime = page.__wallTime + (timing.requestTime - page.__timestamp)
+      page.__wallTime = min(page.__wallTime, requestTime)
+      page.__timestamp = timing.requestTime
+      page.startedDateTime = moment.unix(page.__wallTime).toISOString()
+    }
 
     // Some cached responses generate a Network.requestServedFromCache event,
     // but fromDiskCache is still set to false. For those requestSentDelta will be negative.
@@ -293,6 +302,7 @@ module.exports = {
             if (!page.__timestamp) {
               page.__wallTime = params.wallTime;
               page.__timestamp = params.timestamp;
+              page.__firstRequestId = params.requestId
               page.startedDateTime = moment.unix(params.wallTime).toISOString(); //epoch float64, eg 1440589909.59248
               // URL is better than blank, and it's what devtools uses.
               page.title = request.url;
