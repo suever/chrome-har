@@ -139,7 +139,14 @@ function populateEntryFromResponse(entry, response, page) {
     }
 
     entry.time =
-      max(0, blocked) + max(0, dns) + max(0, connect) + send + wait + receive;
+      formatMillis(
+        max(0, blocked) +
+        max(0, dns) +
+        max(0, connect) +
+        send +
+        wait +
+        receive
+      );
 
     if (entry.__requestId === page.__firstRequestId) {
       // Make sure that the wallTime corresponds to the FIRST request
@@ -442,12 +449,14 @@ module.exports = {
                 entry.__receiveHeadersEnd
             );
             entry.time =
-              max(0, timings.blocked) +
-              max(0, timings.dns) +
-              max(0, timings.connect) +
-              timings.send +
-              timings.wait +
-              timings.receive;
+              formatMillis(
+                max(0, timings.blocked) +
+                max(0, timings.dns) +
+                max(0, timings.connect) +
+                timings.send +
+                timings.wait +
+                timings.receive
+              );
 
             // encodedDataLength will be -1 sometimes
             if (params.encodedDataLength >= 0) {
